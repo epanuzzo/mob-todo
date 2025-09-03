@@ -23,7 +23,6 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({
 }) => {
   const [showActions, setShowActions] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [strikeThrough, setStrikeThrough] = useState(done);
 
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => {
@@ -47,7 +46,6 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({
     if (showActions) {
       setShowActions(false);
     } else if (onDone) {
-      setStrikeThrough(!strikeThrough);
       onDone();
     }
   };
@@ -83,12 +81,12 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({
     <>
       <ItemContainer {...panResponder.panHandlers}>
         <ContentContainer
-          done={strikeThrough}
+          done={done}
           onPress={handleContentPress}
           onLongPress={handleLongPress}
           activeOpacity={0.7}
         >
-          <ToDoText done={strikeThrough}>{text}</ToDoText>
+          <ToDoText done={done}>{text}</ToDoText>
         </ContentContainer>
         {showActions && (
           <ActionsContainer>
