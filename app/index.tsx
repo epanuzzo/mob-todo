@@ -1,14 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { Button } from "../components/atoms/Button/Button";
 import { Input } from "../components/atoms/Input/Input";
 import { Box } from "@/components/atoms/Box";
+import { Text } from "@/components/atoms/Text";
 
 export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <Box>
-        <Text>Hello</Text>
+        <Text type="largeTitle">Add TODO Item:</Text>
       </Box>
       <Box>
         <Input
