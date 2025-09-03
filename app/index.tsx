@@ -1,12 +1,25 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button } from "../components/atoms/Button/Button";
+import { Input } from "../components/atoms/Input/Input";
+import { Box } from "@/components/atoms/Box";
 
 export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
-      <Text>Hello</Text>
-      {/* <Button title="Click me" onPress={() => console.log("Button pressed")} /> */}
+      <Box>
+        <Text>Hello</Text>
+      </Box>
+      <Box>
+        <Input
+          placeholder="Enter your task"
+          onChangeText={(text: string) => console.log(text)}
+        />
+      </Box>
+      <Button
+        title="Add to do item"
+        onPress={() => console.log("Button pressed")}
+      />
     </ScrollView>
   );
 }
@@ -14,5 +27,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
 });
