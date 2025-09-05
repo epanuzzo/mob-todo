@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, fireEvent, act } from "@testing-library/react-native";
 import { ToDoItem } from "./ToDoItem";
 
 describe("ToDoItem Component", () => {
@@ -35,42 +35,52 @@ describe("ToDoItem Component", () => {
   });
 
   it("shows action buttons on long press", () => {
-    const { getByText, queryByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, queryByTestId, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Initially actions should not be visible
-    expect(queryByText("Edit")).toBeNull();
-    expect(queryByText("Delete")).toBeNull();
+    expect(queryByTestId("edit-button")).toBeNull();
+    expect(queryByTestId("delete-button")).toBeNull();
 
     // Long press to show actions
-    fireEvent(content, "onLongPress");
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
 
-    expect(getByText("Edit")).toBeTruthy();
-    expect(getByText("Delete")).toBeTruthy();
+    expect(getByTestId("edit-button")).toBeTruthy();
+    expect(getByTestId("delete-button")).toBeTruthy();
   });
 
   it("calls onEdit when edit button is pressed", () => {
-    const { getByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Show actions first
-    fireEvent(content, "onLongPress");
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
 
-    const editButton = getByText("Edit");
-    fireEvent.press(editButton);
+    const editButton = getByTestId("edit-button");
+    act(() => {
+      fireEvent.press(editButton);
+    });
 
     expect(mockProps.onEdit).toHaveBeenCalledTimes(1);
   });
 
   it("shows delete confirmation modal when delete button is pressed", () => {
-    const { getByText, queryByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Show actions first
-    fireEvent(content, "onLongPress");
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
 
-    const deleteButton = getByText("Delete");
-    fireEvent.press(deleteButton);
+    const deleteButton = getByTestId("delete-button");
+    act(() => {
+      fireEvent.press(deleteButton);
+    });
 
     // Modal should be visible
     expect(getByText("Delete Task")).toBeTruthy();
@@ -83,37 +93,49 @@ describe("ToDoItem Component", () => {
   });
 
   it("calls onDelete when delete is confirmed", () => {
-    const { getByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Show actions first
-    fireEvent(content, "onLongPress");
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
 
     // Press delete button
-    const deleteButton = getByText("Delete");
-    fireEvent.press(deleteButton);
+    const deleteButton = getByTestId("delete-button");
+    act(() => {
+      fireEvent.press(deleteButton);
+    });
 
     // Confirm deletion
     const confirmButton = getByText("Delete");
-    fireEvent.press(confirmButton);
+    act(() => {
+      fireEvent.press(confirmButton);
+    });
 
     expect(mockProps.onDelete).toHaveBeenCalledTimes(1);
   });
 
   it("closes modal when cancel is pressed", () => {
-    const { getByText, queryByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, queryByText, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Show actions first
-    fireEvent(content, "onLongPress");
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
 
     // Press delete button
-    const deleteButton = getByText("Delete");
-    fireEvent.press(deleteButton);
+    const deleteButton = getByTestId("delete-button");
+    act(() => {
+      fireEvent.press(deleteButton);
+    });
 
     // Cancel deletion
     const cancelButton = getByText("Cancel");
-    fireEvent.press(cancelButton);
+    act(() => {
+      fireEvent.press(cancelButton);
+    });
 
     // Modal should be closed
     expect(queryByText("Delete Task")).toBeNull();
@@ -121,16 +143,20 @@ describe("ToDoItem Component", () => {
   });
 
   it("hides actions when content is pressed while actions are visible", () => {
-    const { getByText, queryByText } = render(<ToDoItem {...mockProps} />);
+    const { getByText, queryByTestId, getByTestId } = render(<ToDoItem {...mockProps} />);
     const content = getByText("Test todo item");
 
     // Show actions first
-    fireEvent(content, "onLongPress");
-    expect(getByText("Edit")).toBeTruthy();
+    act(() => {
+      fireEvent(content, "onLongPress");
+    });
+    expect(getByTestId("edit-button")).toBeTruthy();
 
     // Press content again to hide actions
-    fireEvent.press(content);
-    expect(queryByText("Edit")).toBeNull();
+    act(() => {
+      fireEvent.press(content);
+    });
+    expect(queryByTestId("edit-button")).toBeNull();
     expect(mockProps.onDone).not.toHaveBeenCalled();
   });
 });

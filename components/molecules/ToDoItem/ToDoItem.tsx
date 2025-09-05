@@ -90,10 +90,22 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({
         </ContentContainer>
         {showActions && (
           <ActionsContainer>
-            <ActionButton variant="edit" onPress={handleEditPress}>
+            <ActionButton 
+              variant="edit" 
+              onPress={handleEditPress}
+              testID="edit-button"
+              accessibilityLabel="Edit task"
+              accessibilityRole="button"
+            >
               <MaterialIcons name="edit" size={20} color="white" />
             </ActionButton>
-            <ActionButton variant="delete" onPress={handleDeletePress}>
+            <ActionButton 
+              variant="delete" 
+              onPress={handleDeletePress}
+              testID="delete-button"
+              accessibilityLabel="Delete task"
+              accessibilityRole="button"
+            >
               <MaterialIcons name="delete" size={20} color="white" />
             </ActionButton>
           </ActionsContainer>
