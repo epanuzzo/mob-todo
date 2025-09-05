@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, ScrollView, View, Alert } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import { Button } from "../components/atoms/Button/Button";
 import { Input } from "../components/atoms/Input/Input";
 import { Box } from "@/components/atoms/Box";
@@ -17,6 +17,10 @@ import { selectAllTasks } from "@/redux/selectors/tasksSelectors";
 
 export default function HomeScreen() {
   const [inputText, setInputText] = useState("");
+  const [editingTask, setEditingTask] = useState<{
+    id: string;
+    text: string;
+  } | null>(null);
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(selectAllTasks);
 
@@ -34,24 +38,22 @@ export default function HomeScreen() {
   const handleEditTask = (id: string) => {
     const task = tasks.find((t) => t.id === id);
     if (task) {
-      Alert.prompt(
-        "Edit Task",
-        "Enter new text:",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Save",
-            onPress: (text) => {
-              if (text && text.trim()) {
-                dispatch(editTask({ id, text }));
-              }
-            },
-          },
-        ],
-        "plain-text",
-        task.text
-      );
+      setEditingTask({ id, text: task.text });
+      setInputText(task.text);
     }
+  };
+
+  const handleSaveEdit = () => {
+    if (editingTask && inputText.trim()) {
+      dispatch(editTask({ id: editingTask.id, text: inputText }));
+      setEditingTask(null);
+      setInputText("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+    setInputText("");
   };
 
   const handleDeleteTask = (id: string) => {
@@ -61,16 +63,29 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <Box>
-        <Text type="largeTitle">Add TODO Item:</Text>
+        <Text type="largeTitle">
+          {editingTask ? "Edit TODO Item:" : "Add TODO Item:"}
+        </Text>
       </Box>
       <Box>
         <Input
-          placeholder="Enter your task"
+          placeholder={editingTask ? "Edit your task" : "Enter your task"}
           value={inputText}
           onChangeText={setInputText}
         />
       </Box>
-      <Button title="Add to do item" onPress={handleAddTask} />
+      {editingTask ? (
+        <>
+          <Box>
+            <Button title="Save" onPress={handleSaveEdit} />
+          </Box>
+          <Box>
+            <Button title="Cancel" onPress={handleCancelEdit} />
+          </Box>
+        </>
+      ) : (
+        <Button title="Add to do item" onPress={handleAddTask} />
+      )}
       <View style={styles.todoItemsContainer}>
         {tasks.map((task) => (
           <ToDoItem
@@ -98,6 +113,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   todoItemsContainer: {
+    marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
     borderColor: theme.colors.border,
