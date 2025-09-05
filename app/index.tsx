@@ -79,9 +79,11 @@ export default function HomeScreen() {
           <Box>
             <Button title="Save" onPress={handleSaveEdit} />
           </Box>
-          <Box>
-            <Button title="Cancel" onPress={handleCancelEdit} />
-          </Box>
+          <Button
+            title="Cancel"
+            variant="secondary"
+            onPress={handleCancelEdit}
+          />
         </>
       ) : (
         <Button title="Add to do item" onPress={handleAddTask} />

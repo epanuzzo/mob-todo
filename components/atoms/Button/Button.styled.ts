@@ -53,25 +53,27 @@ const getPadding = (size: string) => {
 };
 
 export const StyledButton = styled.TouchableOpacity<StyledButtonProps>`
-  background-color: ${({ variant, disabled }) =>
+  background-color: ${({ variant, disabled }: StyledButtonProps) =>
     getBackgroundColor(variant, disabled)};
   border-radius: ${theme.borderRadius.md}px;
-  padding: ${({ size }) => getPadding(size)};
+  padding: ${({ size }: StyledButtonProps) => getPadding(size)};
   align-items: center;
   justify-content: center;
-  border-width: ${({ variant }) => (variant === "outline" ? 1 : 0)}px;
-  border-color: ${({ variant, disabled }) =>
+  border-width: ${({ variant }: StyledButtonProps) =>
+    variant === "outline" ? 1 : 0}px;
+  border-color: ${({ variant, disabled }: StyledButtonProps) =>
     variant === "outline"
       ? disabled
         ? theme.colors.text.tertiary
         : theme.colors.primary
       : "transparent"};
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  opacity: ${({ disabled }: StyledButtonProps) => (disabled ? 0.6 : 1)};
 `;
 
 export const ButtonText = styled.Text<StyledButtonProps>`
-  color: ${({ variant, disabled }) => getTextColor(variant, disabled)};
-  font-size: ${({ size }) => {
+  color: ${({ variant, disabled }: StyledButtonProps) =>
+    getTextColor(variant, disabled)};
+  font-size: ${({ size }: StyledButtonProps) => {
     switch (size) {
       case "small":
         return theme.typography.footnote.fontSize;
