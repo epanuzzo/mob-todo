@@ -14,6 +14,7 @@ import {
   toggleComplete,
 } from "@/redux/slices/tasksSlice";
 import { selectAllTasks } from "@/redux/selectors/tasksSelectors";
+import { textValidationSchema } from "@/utils/validation";
 
 export default function HomeScreen() {
   const [inputText, setInputText] = useState("");
@@ -21,11 +22,23 @@ export default function HomeScreen() {
     id: string;
     text: string;
   } | null>(null);
+  const [validationError, setValidationError] = useState<string>("");
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(selectAllTasks);
 
+  const validateInput = (text: string): boolean => {
+    try {
+      textValidationSchema.validateSync({ text });
+      setValidationError("");
+      return true;
+    } catch (error: any) {
+      setValidationError(error.message);
+      return false;
+    }
+  };
+
   const handleAddTask = () => {
-    if (inputText.trim()) {
+    if (validateInput(inputText)) {
       dispatch(addTask({ text: inputText }));
       setInputText("");
     }
@@ -40,11 +53,12 @@ export default function HomeScreen() {
     if (task) {
       setEditingTask({ id, text: task.text });
       setInputText(task.text);
+      setValidationError("");
     }
   };
 
   const handleSaveEdit = () => {
-    if (editingTask && inputText.trim()) {
+    if (editingTask && validateInput(inputText)) {
       dispatch(editTask({ id: editingTask.id, text: inputText }));
       setEditingTask(null);
       setInputText("");
@@ -54,10 +68,19 @@ export default function HomeScreen() {
   const handleCancelEdit = () => {
     setEditingTask(null);
     setInputText("");
+    setValidationError("");
   };
 
   const handleDeleteTask = (id: string) => {
     dispatch(removeTask({ id }));
+  };
+
+  const handleInputChange = (text: string) => {
+    setInputText(text);
+    // Clear validation error when user starts typing
+    if (validationError) {
+      setValidationError("");
+    }
   };
 
   return (
@@ -71,7 +94,9 @@ export default function HomeScreen() {
         <Input
           placeholder={editingTask ? "Edit your task" : "Enter your task"}
           value={inputText}
-          onChangeText={setInputText}
+          onChangeText={handleInputChange}
+          error={!!validationError}
+          errorMessage={validationError}
         />
       </Box>
       {editingTask ? (
